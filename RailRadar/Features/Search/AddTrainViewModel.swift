@@ -1,9 +1,3 @@
-//
-//  AddTrainViewModel.swift
-//  
-//
-//  Created by Dinesh on 7/30/26.
-//
 // RailRadar/Features/Search/AddTrainViewModel.swift
 
 import Foundation
@@ -34,29 +28,32 @@ final class AddTrainViewModel: ObservableObject {
             .debounce(for: .milliseconds(300), scheduler: RunLoop.main)
             .removeDuplicates()
             .sink { [weak self] text in
-                self?.performSearch(text)
+                Task {
+                    await self?.performSearch(text)
+                }
             }
             .store(in: &cancellables)
     }
 
-    private func performSearch(_ text: String) {
+    @MainActor
+    private func performSearch(_ text: String) async {
         guard !text.isEmpty else {
             results = []
             return
         }
 
-        // Phase 3: simple stubbed search.
-        // Later: integrate real lookup + API.
-        let lowercased = text.lowercased()
-
-        let stub = [
-            SearchResult(trainNumber: "17210", trainName: "Seshadri Express", suggestedDate: Date()),
-            SearchResult(trainNumber: "17211", trainName: "Kondaveedu Express", suggestedDate: Date())
-        ]
-
-        results = stub.filter {
-            $0.trainNumber.contains(text) ||
-            $0.trainName.lowercased().contains(lowercased)
+        do {
+            let trains = try await trainRepository.searchTrains(by: text)
+            results = trains.map {
+                SearchResult(
+                    trainNumber: $0.number,
+                    trainName: $0.name,
+                    suggestedDate: Date()
+                )
+            }
+        } catch {
+            print("Search error: \(error.localizedDescription)")
+            results = []
         }
     }
 
@@ -71,7 +68,6 @@ final class AddTrainViewModel: ObservableObject {
         isSaving = true
         saveErrorMessage = nil
 
-        // For Phase 3, we don't know distance/duration yet; use placeholders.
         let journey = Journey(
             trainNumber: selected.trainNumber,
             trainName: selected.trainName,
@@ -80,7 +76,7 @@ final class AddTrainViewModel: ObservableObject {
             alightingStationCode: nil,
             distance: 0,
             duration: 0,
-            tierSource: .free // TierManager could refine this later
+            tierSource: .free
         )
 
         do {
