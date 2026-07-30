@@ -1,66 +1,44 @@
-//
-//  MainTabView.swift
-//  
-//
-//  Created by Dinesh on 7/30/26.
-//
+// RailRadar/Features/MainTabView.swift
 
 import SwiftUI
 
 struct MainTabView: View {
+    private let trainRepository: TrainRepositoryProtocol
+    private let onboardService: OnboardTrackingServiceProtocol
+
+    init() {
+        let apiKey = "rg_9b04a7b5a00a4ff180bb6ad4dd6c1868" // Replace later with secure config
+        let baseURL = URL(string: "https://api.railradar.in")!
+        let networkClient = NetworkClient(baseURL: baseURL, apiKey: apiKey)
+        let apiClient = RailRadarAPIClient(networkClient: networkClient)
+        self.trainRepository = TrainRepository(apiClient: apiClient)
+        self.onboardService = OnboardTrackingService()
+    }
+
     var body: some View {
         TabView {
-            MyTrainsPlaceholderView()
-                .tabItem {
-                    Label("My Trains", systemImage: "tram")
-                }
+            MyTrainsView(
+                trainRepository: trainRepository,
+                onboardService: onboardService
+            )
+            .tabItem {
+                Label("My Trains", systemImage: "tram")
+            }
 
             FriendsPlaceholderView()
                 .tabItem {
                     Label("Friends", systemImage: "person.2")
                 }
 
-            PassportPlaceholderView()
+            PassportView(trainRepository: trainRepository)
                 .tabItem {
                     Label("Passport", systemImage: "globe")
                 }
 
-            SearchPlaceholderView()
+            AddTrainView(trainRepository: trainRepository)
                 .tabItem {
                     Label("Search", systemImage: "magnifyingglass")
                 }
         }
-    }
-}
-
-struct MyTrainsPlaceholderView: View {
-    var body: some View {
-        Text("My Trains")
-            .font(.largeTitle)
-            .padding()
-    }
-}
-
-struct FriendsPlaceholderView: View {
-    var body: some View {
-        Text("Friends")
-            .font(.largeTitle)
-            .padding()
-    }
-}
-
-struct PassportPlaceholderView: View {
-    var body: some View {
-        Text("Passport")
-            .font(.largeTitle)
-            .padding()
-    }
-}
-
-struct SearchPlaceholderView: View {
-    var body: some View {
-        Text("Search")
-            .font(.largeTitle)
-            .padding()
     }
 }
