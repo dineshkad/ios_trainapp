@@ -4,17 +4,14 @@
 //
 //  Created by Dinesh on 7/30/26.
 //
+// RailRadar/Core/Services/Onboard/OnboardTrackingServiceProtocol.swift
 
-struct OnboardStatus {
-    enum State { case notOnboard, betweenStations, atStation(String), arrivingSoon(String) }
-    let state: State
-    let distanceRemaining: Double?
-    let etaToNextStation: Date?
-    let etaToDestination: Date?
-}
+import Foundation
+import Combine
 
 protocol OnboardTrackingServiceProtocol {
+    var statusPublisher: AnyPublisher<OnboardStatus, Never> { get }
+
     func startTracking(journey: Journey)
     func stopTracking()
-    var statusPublisher: AnyPublisher<OnboardStatus, Never> { get }
 }
