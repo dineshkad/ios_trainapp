@@ -5,11 +5,10 @@
 //  Created by Dinesh on 7/30/26.
 //
 
-struct CoachLayout {
-    struct Berth {
-        let number: Int
-        let type: BerthType
-    }
-    let code: String
-    let berths: [Berth]
+// RailRadar/Core/Services/Coach/CoachLayoutServiceProtocol.swift
+
+import Foundation
+
+protocol CoachLayoutServiceProtocol {
+    func layout(for coachType: String) -> CoachLayout
 }
