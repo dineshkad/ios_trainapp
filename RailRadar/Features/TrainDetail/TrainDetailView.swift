@@ -49,6 +49,23 @@ struct TrainDetailView: View {
                     }
                 }
 
+                switch viewModel.loadingState {
+                case .idle, .loading:
+                    Text("Loading schedule…")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                case .failed(let message):
+                    Text("Failed to load schedule: \(message)")
+                        .font(.subheadline)
+                        .foregroundColor(.red)
+                case .loaded:
+                    if let train = viewModel.train {
+                        TimelineView(train: train, journeyDate: viewModel.journey.journeyDate)
+                            .padding(.top, 8)
+                    }
+                }
+
+
                 Text("Map view will show route and live position here.")
                     .font(.caption)
                     .foregroundColor(.secondary)

@@ -1,3 +1,10 @@
+//
+//  AddTrainViewModel.swift
+//  
+//
+//  Created by Dinesh on 7/30/26.
+//
+
 // RailRadar/Features/Search/AddTrainViewModel.swift
 
 import Foundation
@@ -28,15 +35,14 @@ final class AddTrainViewModel: ObservableObject {
             .debounce(for: .milliseconds(300), scheduler: RunLoop.main)
             .removeDuplicates()
             .sink { [weak self] text in
-                Task {
-                    await self?.performSearch(text)
-                }
+                self?.performSearch(text)
+
             }
             .store(in: &cancellables)
     }
 
-    @MainActor
-    private func performSearch(_ text: String) async {
+    private func performSearch(_ text: String) {
+
         guard !text.isEmpty else {
             results = []
             return
@@ -54,6 +60,8 @@ final class AddTrainViewModel: ObservableObject {
         } catch {
             print("Search error: \(error.localizedDescription)")
             results = []
+
+
         }
     }
 
@@ -77,6 +85,7 @@ final class AddTrainViewModel: ObservableObject {
             distance: 0,
             duration: 0,
             tierSource: .free
+
         )
 
         do {

@@ -5,6 +5,7 @@
 //  Created by Dinesh on 7/30/26.
 //
 
+
 // RailRadar/Features/TrainDetail/TrainDetailViewModel.swift
 
 import Foundation
@@ -22,6 +23,8 @@ final class TrainDetailViewModel: ObservableObject {
     @Published var train: Train?
     @Published var liveStatus: LiveStatusSnapshot?
     @Published var loadingState: LoadingState = .idle
+
+
     @Published var onboardStatus: OnboardStatus = OnboardStatus(
         state: .notOnboard,
         distanceRemaining: nil,
@@ -49,6 +52,7 @@ final class TrainDetailViewModel: ObservableObject {
             }
             .store(in: &cancellables)
     }
+
 
     @MainActor
     func load() async {
