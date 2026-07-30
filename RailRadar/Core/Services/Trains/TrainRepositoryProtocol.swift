@@ -1,10 +1,3 @@
-//
-//  TrainRepositoryProtocol.swift
-//  
-//
-//  Created by Dinesh on 7/30/26.
-//
-
 // RailRadar/Core/Services/Trains/TrainRepositoryProtocol.swift
 
 import Foundation
