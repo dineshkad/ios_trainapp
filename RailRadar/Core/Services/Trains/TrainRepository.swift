@@ -1,9 +1,3 @@
-//
-//  TrainRepository.swift
-//  
-//
-//  Created by Dinesh on 7/30/26.
-//
 // RailRadar/Core/Services/Trains/TrainRepository.swift
 
 import Foundation
@@ -13,6 +7,8 @@ final class TrainRepository: TrainRepositoryProtocol {
     private let apiClient: RailRadarAPIClient
     private let persistence: PersistenceController
     private let tierManager: TierManager
+
+    private var cachedLookup: TrainLookupDTO?
 
     init(
         apiClient: RailRadarAPIClient,
@@ -35,12 +31,29 @@ final class TrainRepository: TrainRepositoryProtocol {
     }
 
     func searchTrains(by query: String) async throws -> [Train] {
-        // For Phase 2, just return empty; later integrate lookup + fuzzy search.
-        return []
+        let lookup = try await getLookup()
+        let lowercased = query.lowercased()
+
+        let matches = lookup.filter { (number, name) in
+            number.contains(query) || name.lowercased().contains(lowercased)
+        }
+
+        // For Phase 4, return lightweight Train objects with just number/name.
+        return matches.map { (number, name) in
+            Train(
+                number: number,
+                name: name,
+                type: nil,
+                fromStationCode: "",
+                toStationCode: "",
+                schedule: [],
+                isFavorite: false
+            )
+        }
     }
 
     func getTrainsBetween(from: String, to: String) async throws -> [Train] {
-        // For Phase 2, return empty; map TrainsBetweenDTO -> Train later.
+        // Still stubbed for now; can be implemented later.
         return []
     }
 
@@ -63,7 +76,6 @@ final class TrainRepository: TrainRepositoryProtocol {
         let context = persistence.container.mainContext
         let entities = try persistence.fetchJourneys(context: context)
 
-        // Minimal mapping back to domain model for now.
         return entities.map { entity in
             Journey(
                 id: entity.id,
@@ -79,5 +91,15 @@ final class TrainRepository: TrainRepositoryProtocol {
             )
         }
     }
-}
 
+    // MARK: - Lookup
+
+    private func getLookup() async throws -> TrainLookupDTO {
+        if let cached = cachedLookup {
+            return cached
+        }
+        let lookup = try await apiClient.getTrainLookup()
+        cachedLookup = lookup
+        return lookup
+    }
+}

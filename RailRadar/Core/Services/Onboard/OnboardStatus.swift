@@ -1,10 +1,3 @@
-//
-//  OnboardStatus.swift
-//  
-//
-//  Created by Dinesh on 7/30/26.
-//
-
 // RailRadar/Core/Services/Onboard/OnboardStatus.swift
 
 import Foundation
