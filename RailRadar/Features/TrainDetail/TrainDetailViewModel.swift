@@ -4,21 +4,14 @@
 //
 //  Created by Dinesh on 7/30/26.
 //
-<<<<<<< HEAD
-=======
 
->>>>>>> 6303420 (Phase 4: wire RailRadar API into search and train detail)
+
 // RailRadar/Features/TrainDetail/TrainDetailViewModel.swift
 
 import Foundation
 import Combine
 
 final class TrainDetailViewModel: ObservableObject {
-<<<<<<< HEAD
-    @Published var journey: Journey
-    @Published var train: Train?
-    @Published var liveStatus: LiveStatusSnapshot?
-=======
     enum LoadingState {
         case idle
         case loading
@@ -30,7 +23,8 @@ final class TrainDetailViewModel: ObservableObject {
     @Published var train: Train?
     @Published var liveStatus: LiveStatusSnapshot?
     @Published var loadingState: LoadingState = .idle
->>>>>>> 6303420 (Phase 4: wire RailRadar API into search and train detail)
+
+
     @Published var onboardStatus: OnboardStatus = OnboardStatus(
         state: .notOnboard,
         distanceRemaining: nil,
@@ -70,13 +64,6 @@ final class TrainDetailViewModel: ObservableObject {
 
             let snapshot = try await trainRepository.getLiveStatus(for: journey.trainNumber, journeyDate: journey.journeyDate)
             self.liveStatus = snapshot
-
-            // TODO: Fetch route + stations and inject into onboardService
-            // For now, we skip or use empty data
-            if let onboard = onboardService as? OnboardTrackingService {
-                let emptyRoute = RouteGeometry(trainNumber: train.number, coordinates: [])
-                onboard.injectContext(train: train, route: emptyRoute, stations: [])
-            }
 
             loadingState = .loaded
         } catch {
