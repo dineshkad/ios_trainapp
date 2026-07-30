@@ -7,7 +7,7 @@ struct MainTabView: View {
     private let onboardService: OnboardTrackingServiceProtocol
 
     init() {
-        let apiKey = "YOUR_RAILRADAR_API_KEY" // Replace later with secure config
+        let apiKey = "rg_9b04a7b5a00a4ff180bb6ad4dd6c1868" // Replace later with secure config
         let baseURL = URL(string: "https://api.railradar.in")!
         let networkClient = NetworkClient(baseURL: baseURL, apiKey: apiKey)
         let apiClient = RailRadarAPIClient(networkClient: networkClient)
@@ -30,7 +30,7 @@ struct MainTabView: View {
                     Label("Friends", systemImage: "person.2")
                 }
 
-            PassportPlaceholderView()
+            PassportView(trainRepository: trainRepository)
                 .tabItem {
                     Label("Passport", systemImage: "globe")
                 }
