@@ -76,4 +76,17 @@ final class RailRadarAPIClient {
         )
         return try await networkClient.request(endpoint, as: TrainLookupDTO.self)
     }
+    // MARK: - PNR
+
+    func getPNRStatus(pnr: String) async throws -> PNRStatusDTO {
+        guard PNRConfig.endpointPath != nil else {
+            throw PNRError.providerNotConfigured
+        }
+        let endpoint = Endpoint(
+            path: "\(PNRConfig.endpointPath!)/\(pnr)",
+            method: .get,
+            queryItems: nil
+        )
+        return try await networkClient.request(endpoint, as: PNRStatusDTO.self)
+    }
 }

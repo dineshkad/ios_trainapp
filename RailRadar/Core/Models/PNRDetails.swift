@@ -9,8 +9,12 @@
 
 import Foundation
 
-struct PNRDetails: Hashable {
+struct PNRDetails: Codable, Equatable {
     let pnr: String
-    let journeyId: UUID
+    let trainNumber: String
+    let trainName: String
+    let boardingStation: String
+    let destinationStation: String
+    let journeyDate: Date
     let passengers: [PassengerAllocation]
 }

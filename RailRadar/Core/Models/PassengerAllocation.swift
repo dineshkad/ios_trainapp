@@ -17,3 +17,8 @@ struct PassengerAllocation: Hashable {
     let travelClass: String // e.g., SL, 3A, 2A, CC
     let status: String // e.g., CNF, RAC, WL
 }
+
+extension PassengerAllocation {
+    /// True when the passenger has a confirmed/RAC berth to show on the layout.
+    var hasAllocation: Bool { berthNumber > 0 && coachCode != "-" }
+}
