@@ -42,26 +42,25 @@ final class AddTrainViewModel: ObservableObject {
     }
 
     private func performSearch(_ text: String) {
-
-        guard !text.isEmpty else {
-            results = []
-            return
-        }
-
-        do {
-            let trains = try await trainRepository.searchTrains(by: text)
-            results = trains.map {
-                SearchResult(
-                    trainNumber: $0.number,
-                    trainName: $0.name,
-                    suggestedDate: Date()
-                )
+        Task {
+            guard !text.isEmpty else {
+                results = []
+                return
             }
-        } catch {
-            print("Search error: \(error.localizedDescription)")
-            results = []
 
-
+            do {
+                let trains = try await trainRepository.searchTrains(by: text)
+                results = trains.map {
+                    SearchResult(
+                        trainNumber: $0.number,
+                        trainName: $0.name,
+                        suggestedDate: Date()
+                    )
+                }
+            } catch {
+                print("Search error: \(error.localizedDescription)")
+                results = []
+            }
         }
     }
 

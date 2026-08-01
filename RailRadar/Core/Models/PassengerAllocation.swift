@@ -9,7 +9,7 @@
 
 import Foundation
 
-struct PassengerAllocation: Hashable {
+struct PassengerAllocation: Hashable, Codable{
     let name: String?
     let coachCode: String
     let berthNumber: Int
