@@ -4,15 +4,27 @@
 //
 //  Created by Dinesh on 7/30/26.
 //
+
+
 // RailRadar/Features/TrainDetail/TrainDetailViewModel.swift
 
 import Foundation
 import Combine
 
 final class TrainDetailViewModel: ObservableObject {
+    enum LoadingState {
+        case idle
+        case loading
+        case loaded
+        case failed(String)
+    }
+
     @Published var journey: Journey
     @Published var train: Train?
     @Published var liveStatus: LiveStatusSnapshot?
+    @Published var loadingState: LoadingState = .idle
+
+
     @Published var onboardStatus: OnboardStatus = OnboardStatus(
         state: .notOnboard,
         distanceRemaining: nil,
@@ -41,19 +53,21 @@ final class TrainDetailViewModel: ObservableObject {
             .store(in: &cancellables)
     }
 
+
     @MainActor
     func load() async {
+        loadingState = .loading
+
         do {
-            // Load schedule
             let train = try await trainRepository.getSchedule(for: journey.trainNumber)
             self.train = train
 
-            // Load live status (if any)
             let snapshot = try await trainRepository.getLiveStatus(for: journey.trainNumber, journeyDate: journey.journeyDate)
             self.liveStatus = snapshot
+
+            loadingState = .loaded
         } catch {
-            // For Phase 3, keep it simple: ignore detailed error handling
-            print("TrainDetail load error: \(error.localizedDescription)")
+            loadingState = .failed(error.localizedDescription)
         }
     }
 
